@@ -16,7 +16,11 @@ test: s21_matrix.a
 	./s21_tests.out
 
 gcov_report: s21_matrix.a
+ifeq ($(OS), Darwin)
 	$(CC) $(FLAGS) --coverage -lcheck s21_matrix_test.c s21_matrix.c -o gcov_report
+else
+	$(CC) $(FLAGS) --coverage -lcheck s21_matrix_test.c s21_matrix.c $(TST_LIBS) -o gcov_report
+endif
 	./gcov_report
 	lcov -t "./gcov_report" -o gcov_report.info -c -d .
 	genhtml -o report gcov_report.info
@@ -27,7 +31,7 @@ else
 endif
 
 clean: 
-	rm -rf test gcov_test *.gcno *.gcda *.info report *.o *.a *.cfg gcov_report *.dSYM *.out
+	rm -rf test gcov_test *.gcno *.gcda *.info report *.o *.a gcov_report *.dSYM *.out
 
 check:
 	cp ../materials/linters/CPPLINT.cfg ./
