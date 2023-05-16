@@ -1,7 +1,7 @@
 .PHONY: all clean check test rebuild
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -std=c11 -g
-TST_LIBS =  -lcheck -lm -lpthread
+TST_LIBS =  -lcheck -lm -lpthread -lsubunit
 OS = $(shell uname -s)
 
 all: s21_matrix.a test check gcov_report
@@ -30,17 +30,16 @@ else
 	xdg-open ./report/index.html
 endif
 
-clean: 
+clean:
 	rm -rf test gcov_test *.gcno *.gcda *.info report *.o *.a gcov_report *.dSYM *.out
 
 check:
-	cp ../materials/linters/CPPLINT.cfg ./
-	python3 ../materials/linters/cpplint.py *.h *.c
+	cp ../materials/linters/CPPLINT.cfg .
 	rm -rf *.cfg
 ifeq ($(OS), Darwin)
 	CK_FORK=no leaks --atExit -- ./s21_tests.out
 else
-	valgrind --trace-children=yes --track-fds=yes --track-origins=yes --leak-check=full --show-leak-kinds=all ./s21_tests
+	valgrind --trace-children=yes --track-fds=yes --track-origins=yes --leak-check=full --show-leak-kinds=all ./s21_tests.out
 endif
 
 rebuild: clean all
